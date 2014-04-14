@@ -2,8 +2,8 @@
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- Advanced Settings -->
-    <string name="advanced_setting">Impostazioni Avanzate</string>
-    <string name="incall_vibration">Vibrazione In-call</string>
+    <string name="advanced_setting">Impostazioni avanzate</string>
+    <string name="incall_vibration">Vibrazione in-call</string>
     <string name="vibrate_outgoing">Vibra alla risposta</string>
     <string name="vibrate_call_waiting">Vibra in attesa di rispondere</string>
     <string name="vibrate_hangup">Vibra al riaggancio</string>

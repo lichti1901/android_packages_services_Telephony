@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Advanced Settings -->
+    <string name="advanced_setting">Impostazioni avanzate</string>
+    <string name="incall_vibration">Vibrazione in-call</string>
+    <string name="vibrate_outgoing">Vibra alla risposta</string>
+    <string name="vibrate_call_waiting">Vibra in attesa di rispondere</string>
+    <string name="vibrate_hangup">Vibra al riaggancio</string>
+    <string name="vibrate_45">Vibra ogni minuto</string>
+    <string name="vibrate_45_sum">Vibra al secondo 45 di ogni minuto durante una chiamata in uscita</string>
+
+</resources>

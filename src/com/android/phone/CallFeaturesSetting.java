@@ -51,6 +51,7 @@ import android.preference.PreferenceGroup;
 import android.preference.PreferenceManager;
 import android.preference.PreferenceScreen;
 import android.preference.SwitchPreference;
+import android.preference.SlimSeekBarPreference;
 import android.provider.ContactsContract.CommonDataKinds;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -65,6 +66,7 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.ListAdapter;
 
+import com.android.internal.util.rascarlo.DeviceUtils;
 import com.android.internal.telephony.CallForwardInfo;
 import com.android.internal.telephony.CommandsInterface;
 import com.android.internal.telephony.Phone;
@@ -180,6 +182,8 @@ public class CallFeaturesSetting extends PreferenceActivity
 
     private static final String BUTTON_RINGTONE_KEY    = "button_ringtone_key";
     private static final String BUTTON_VIBRATE_ON_RING = "button_vibrate_on_ring";
+    private static final String KEY_TORCH_PULSE = "torch_pulse";
+    private static final String KEY_TORCH_PULSE_RATE = "torch_pulse_rate";
     private static final String BUTTON_PLAY_DTMF_TONE  = "button_play_dtmf_tone";
     private static final String BUTTON_DTMF_KEY        = "button_dtmf_settings";
     private static final String BUTTON_RETRY_KEY       = "button_auto_retry_key";
@@ -290,6 +294,8 @@ public class CallFeaturesSetting extends PreferenceActivity
 
     private Preference mRingtonePreference;
     private CheckBoxPreference mVibrateWhenRinging;
+    private CheckBoxPreference mPulseTorch;
+    private SlimSeekBarPreference mTorchRate;
     /** Whether dialpad plays DTMF tone or not. */
     private CheckBoxPreference mPlayDtmfTone;
     private CheckBoxPreference mButtonAutoRetry;
@@ -592,6 +598,16 @@ public class CallFeaturesSetting extends PreferenceActivity
             boolean doVibrate = (Boolean) objValue;
             Settings.System.putInt(mPhone.getContext().getContentResolver(),
                     Settings.System.VIBRATE_WHEN_RINGING, doVibrate ? 1 : 0);
+        } else if (preference == mPulseTorch) {
+            boolean doPulse = (Boolean) objValue;
+            Settings.System.putInt(mPhone.getContext().getContentResolver(),
+                    Settings.System.TORCH_WHILE_RINGING, doPulse ? 1 : 0);
+        } else if (preference == mTorchRate) {
+            String rate = (String) objValue;
+            Settings.System.putInt(mPhone.getContext().getContentResolver(),
+                    Settings.System.TORCH_WHILE_RINGING_PERIOD,
+                    Integer.parseInt(rate));
+            return true;
         } else if (preference == mButtonDTMF) {
             int index = mButtonDTMF.findIndexOfValue((String) objValue);
             Settings.System.putInt(mPhone.getContext().getContentResolver(),
@@ -1580,6 +1596,8 @@ public class CallFeaturesSetting extends PreferenceActivity
 
         mRingtonePreference = findPreference(BUTTON_RINGTONE_KEY);
         mVibrateWhenRinging = (CheckBoxPreference) findPreference(BUTTON_VIBRATE_ON_RING);
+        mPulseTorch = (CheckBoxPreference) findPreference(KEY_TORCH_PULSE);
+        mTorchRate = (SlimSeekBarPreference) findPreference(KEY_TORCH_PULSE_RATE);
         mPlayDtmfTone = (CheckBoxPreference) findPreference(BUTTON_PLAY_DTMF_TONE);
         mButtonDTMF = (ListPreference) findPreference(BUTTON_DTMF_KEY);
         mButtonAutoRetry = (CheckBoxPreference) findPreference(BUTTON_RETRY_KEY);
@@ -1610,6 +1628,32 @@ public class CallFeaturesSetting extends PreferenceActivity
             } else {
                 prefSet.removePreference(mVibrateWhenRinging);
                 mVibrateWhenRinging = null;
+            }
+        }
+
+        final boolean supportsTorch =
+                DeviceUtils.deviceSupportsTorch(mPhone.getContext());
+
+        if (mPulseTorch != null) {
+            if (supportsTorch) {
+                mPulseTorch.setOnPreferenceChangeListener(this);
+            } else {
+                prefSet.removePreference(mPulseTorch);
+                mPulseTorch = null;
+            }
+        }
+
+        if (mTorchRate != null) {
+            if (supportsTorch) {
+                mTorchRate.setDefault(500);
+                mTorchRate.isMilliseconds(true);
+                mTorchRate.setInterval(1);
+                mTorchRate.minimumValue(100);
+                mTorchRate.multiplyValue(25);
+                mTorchRate.setOnPreferenceChangeListener(this);
+            } else {
+                prefSet.removePreference(mTorchRate);
+                mTorchRate = null;
             }
         }
 
@@ -1888,6 +1932,19 @@ public class CallFeaturesSetting extends PreferenceActivity
 
         if (mVibrateWhenRinging != null) {
             mVibrateWhenRinging.setChecked(getVibrateWhenRinging(this));
+        }
+
+        if (mPulseTorch != null) {
+            final boolean pulse = Settings.System.getInt(
+                    getContentResolver(), Settings.System.TORCH_WHILE_RINGING, 0) == 1;
+            mPulseTorch.setChecked(pulse);
+        }
+
+        if (mTorchRate != null) {
+            final int rate = Settings.System.getInt(getContentResolver(),
+                    Settings.System.TORCH_WHILE_RINGING_PERIOD, 500);
+            // Minimum 100 is 4 intervals of the 25 multiplier
+            mTorchRate.setInitValue((rate / 25) - 4);
         }
 
         if (mButtonDTMF != null) {

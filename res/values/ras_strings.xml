@@ -55,4 +55,8 @@
     <string name="entry_15dip">15dip</string>
     <string name="entry_20dip">20dip</string>
     <string name="entry_25dip">25dip</string>
+
+    <!-- Pulse torch with incoming call -->
+    <string name="torch_incoming_title">Pulse torch on incoming call</string>
+    <string name="torch_incoming_seekbar_title">Torch pulse rate</string>
 </resources>

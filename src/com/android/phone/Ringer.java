@@ -17,6 +17,7 @@
 package com.android.phone;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioManager;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -30,10 +31,13 @@ import android.os.ServiceManager;
 import android.os.SystemClock;
 import android.os.SystemProperties;
 import android.os.SystemVibrator;
+import android.os.UserHandle;
 import android.os.Vibrator;
 import android.provider.Settings;
 import android.util.Log;
 
+import com.android.internal.util.rascarlo.DeviceUtils;
+import com.android.internal.util.rascarlo.TorchConstants;
 import com.android.internal.telephony.Phone;
 /**
  * Ringer manager for the Phone app.
@@ -66,6 +70,7 @@ public class Ringer {
     private Handler mRingHandler;
     private long mFirstRingEventTime = -1;
     private long mFirstRingStartTime = -1;
+    private boolean mWeStartedTorch;
 
     /**
      * Initialize the singleton Ringer instance.
@@ -175,6 +180,20 @@ public class Ringer {
                 return;
             }
 
+            if (Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.TORCH_WHILE_RINGING, 0) == 1
+                    && DeviceUtils.deviceSupportsTorch(mContext)) {
+                mWeStartedTorch = true;
+                Intent intent = new Intent(TorchConstants.ACTION_ON);
+                intent.putExtra(TorchConstants.STROBE_MODE, true);
+                intent.putExtra(TorchConstants.STROBE_PERIOD,
+                        Settings.System.getInt(mContext.getContentResolver(),
+                        Settings.System.TORCH_WHILE_RINGING_PERIOD, 500));
+                intent.putExtra(TorchConstants.NOTIFICATION_SHOWN, false);
+                mContext.sendBroadcastAsUser(
+                        intent, new UserHandle(UserHandle.USER_CURRENT));
+            }
+
             makeLooper();
             if (mFirstRingEventTime < 0) {
                 mFirstRingEventTime = SystemClock.elapsedRealtime();
@@ -223,6 +242,13 @@ public class Ringer {
                 mPowerManager.setAttentionLight(false, 0x00000000);
             } catch (RemoteException ex) {
                 // the other end of this binder call is in the system process.
+            }
+
+            if (mWeStartedTorch) {
+                mWeStartedTorch = false;
+                Intent intent = new Intent(TorchConstants.ACTION_OFF);
+                mContext.sendBroadcastAsUser(
+                        intent, new UserHandle(UserHandle.USER_CURRENT));
             }
 
             if (mRingHandler != null) {

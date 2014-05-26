@@ -14,6 +14,10 @@
     <string name="bg_incall">Incoming call in background</string>
     <string name="bg_incall_summary">Keep incoming call UI in background when screen is on, show notification and play ringtone only</string>
 
+    <!-- Incall Glowpad transparency -->
+    <string name="glow_bg_trans">Incoming call</string>
+    <string name="glow_bg_trans_summary">Make glowpad background transparent during incoming call so entire contact picture is visible</string>
+
     <!-- Number lookup -->
     <string name="number_lookup">Phone number lookup</string>
     <string name="enable_forward_lookup_title">Enable forward lookup</string>

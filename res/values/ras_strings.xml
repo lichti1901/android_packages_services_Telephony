@@ -41,4 +41,18 @@
     <string name="national_roaming_enable">Connect to data services when nationally roaming</string>
     <!-- Mobile network settings screen, setting summary text when check box is clear -->
     <string name="national_roaming_disable">Do not connect to data services when nationally roaming</string>
+
+    <!-- Setting title for dialpad key padding. -->
+    <string name="dialkey_padding_title">Dialpad key padding</string>
+    <!-- Dialog title of the dialpad key padding setting. -->
+    <string name="dialkey_padding_dialog_title">Padding for dialpad keys</string>
+    <!-- Setting summary for the dialpad key padding setting. -->
+    <string name="dialkey_padding_summary">Amount of padding on top and bottom of dialpad number keys</string>
+    <!-- Values for dialpad key padding array entries. -->
+    <string name="entry_0dip">0dip</string>
+    <string name="entry_5dip">5dip</string>
+    <string name="entry_10dip">10dip</string>
+    <string name="entry_15dip">15dip</string>
+    <string name="entry_20dip">20dip</string>
+    <string name="entry_25dip">25dip</string>
 </resources>

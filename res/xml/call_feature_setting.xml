@@ -199,6 +199,13 @@
       android:summary="@string/bg_incall_as_heads_up_summary"/>
 
   <CheckBoxPreference
+      android:key="button_detailed_incall_info"
+      android:title="@string/detailed_incall_info_title"
+      android:summary="@string/detailed_incall_info_summary"
+      android:persistent="false"
+      android:defaultValue="false" />
+
+  <CheckBoxPreference
       android:key="incall_glowpad_transparency"
       android:title="@string/glow_bg_trans"
       android:persistent="false"

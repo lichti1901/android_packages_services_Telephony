@@ -221,7 +221,9 @@ public class CallFeaturesSetting extends PreferenceActivity
     private static final String BUTTON_CHOOSE_PEOPLE_LOOKUP_PROVIDER =
             "button_choose_people_lookup_provider";
     private static final String BUTTON_CHOOSE_REVERSE_LOOKUP_PROVIDER =
-           "button_choose_reverse_lookup_provider";
+            "button_choose_reverse_lookup_provider";
+    private static final String BUTTON_DETAILED_INCALL_INFO_KEY =
+            "button_detailed_incall_info";
 
     private Intent mContactListIntent;
 
@@ -320,6 +322,7 @@ public class CallFeaturesSetting extends PreferenceActivity
     private ListPreference mChooseForwardLookupProvider;
     private ListPreference mChoosePeopleLookupProvider;
     private ListPreference mChooseReverseLookupProvider;
+    private CheckBoxPreference mDetailedIncallInfo;
 
     private class VoiceMailProvider {
         public VoiceMailProvider(String name, Intent intent) {
@@ -625,6 +628,10 @@ public class CallFeaturesSetting extends PreferenceActivity
         } else if (preference == mButtonCallUiAsHeadsUp) {
             Settings.System.putInt(mPhone.getContext().getContentResolver(),
                     Settings.System.CALL_UI_AS_HEADS_UP,
+                    (Boolean) objValue ? 1 : 0);
+        } else if (preference == mDetailedIncallInfo){
+            Settings.System.putInt(getContentResolver(), 
+                    Settings.System.DETAILED_INCALL_INFO,
                     (Boolean) objValue ? 1 : 0);
         } else if (preference == mIncallGlowpadTransparency) {
             Settings.System.putInt(mPhone.getContext().getContentResolver(),
@@ -1784,6 +1791,11 @@ public class CallFeaturesSetting extends PreferenceActivity
         mChooseReverseLookupProvider.setOnPreferenceChangeListener(this);
 
         restoreLookupProviders();
+
+        mDetailedIncallInfo = (CheckBoxPreference) findPreference(BUTTON_DETAILED_INCALL_INFO_KEY);
+        mDetailedIncallInfo.setChecked((Settings.System.getInt(getContentResolver(),
+                Settings.System.DETAILED_INCALL_INFO, 0) == 1));
+        mDetailedIncallInfo.setOnPreferenceChangeListener(this);
 
         // create intent to bring up contact list
         mContactListIntent = new Intent(Intent.ACTION_GET_CONTENT);
